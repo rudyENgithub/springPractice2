@@ -5,6 +5,7 @@ import com.spring_cookbook.domain.Post;
 import com.spring_cookbook.domain.Users;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +18,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@Transactional
 public class UserDAO {
 
     @Autowired
@@ -45,11 +48,9 @@ public class UserDAO {
 	private class UserMapper implements RowMapper<Users> {
 		public Users mapRow(ResultSet row, int rowNum) throws SQLException {
 			Users user = new Users();
-
 			user.setId(row.getLong("id"));
 			user.setFirstName(row.getString("first_name"));
 			user.setAge(row.getInt("age"));
-			
 			return user;
 		}
 	}
@@ -110,6 +111,23 @@ public class UserDAO {
     public void delete(Users user) {
 		String sql = "delete  from users where id=?";
 		jdbcTemplate.update(sql, user.getId());
+	}
+    
+    public long countMinorUsers() {
+		String sql = "select count(*) from users where age > 18";
+		return jdbcTemplate.queryForObject(sql, Long.class);
+	}
+    
+    
+    public void add(List<Users> userList) {
+		String sql = "insert into users (first_name, age) values (?, ?)";
+		
+		List<Object[]> userRows = new ArrayList<Object[]>();
+		for (Users user : userList) {
+	        userRows.add(new Object[] {user.getFirstName(), user.getAge()});
+		}
+		
+		jdbcTemplate.batchUpdate(sql, userRows);
 	}
 }
 

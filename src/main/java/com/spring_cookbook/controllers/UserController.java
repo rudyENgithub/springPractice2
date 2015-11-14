@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.spring_cookbook.dao.UserDAO;
 import com.spring_cookbook.domain.Users;
+import java.util.LinkedList;
 import java.util.List;
 
 @Controller
@@ -65,6 +66,29 @@ public class UserController {
                 Users usuario1 =  new Users();
                  usuario1.setId(18L);
 		userDAO.delete(usuario1);
+	}
+        
+        @RequestMapping("countMinosUsers")
+	public void countMinosUsers() {
+		System.out.println(userDAO.countMinorUsers());
+	}
+        
+        
+        @RequestMapping("addVariosObjetos")
+	public void addVariosObjetos() {
+		List<Users> userList = new LinkedList<Users>();
+
+		Users user1 = new Users();
+		user1.setFirstName("Merlin");
+                user1.setAge(12);
+		userList.add(user1);
+
+		Users user2 = new Users();
+		user2.setFirstName("Arthur");
+                 user2.setAge(66);
+		userList.add(user2);
+
+		userDAO.add(userList);
 	}
          
         
